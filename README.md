@@ -1,8 +1,5 @@
 ### Hi there 👋
 
-<!--
-**hasithz/hasithz** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
-
 Here are some ideas to get you started:
 
 - 🔭 I’m currently working on mt final year project
@@ -13,4 +10,11 @@ Here are some ideas to get you started:
 - 📫 How to reach me: send me a mail and i'll reply you within 1 day
 - 😄 Pronouns: he
 - ⚡ Fun fact: Snakes can help predict earthquakes.
+
+<!--
+**hasithz/hasithz** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
+
+- 123
+
+
 -->
