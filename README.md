@@ -2,7 +2,7 @@
 
 Here are some ideas to get you started:
 
-- 🔭 I’m currently working on my own project to help for biginners
+- 🔭 I’m currently working on my own project to help biginners
 - 🌱 I’m currently learning python and machine learning 
 - 👯 I’m looking to collaborate on industrial automation and IoT projects
 - 🤔 I’m looking for help with good with app development 
