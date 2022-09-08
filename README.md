@@ -15,6 +15,14 @@ Here are some ideas to get you started:
 
 
 
+<!-- activity graph heroku-app start -->
+<p align="center">
+    <a href="https://wakatime.com/@hasithz">
+        <img src="https://activity-graph.herokuapp.com/graph?username=hasithz&theme=react-dark&hide_border=false&hide_title=false&area=true&custom_title=Total%20contribution%20graph%20in%20all%20repo" width="99%" alt="activity graph">
+    </a>
+</p>
+<!-- activity graph heroku-app end -->
+
 
 <div align="center">
 
@@ -22,6 +30,17 @@ Here are some ideas to get you started:
 
 </div>
 
+
+<p align="center">
+<!--<a href="https://wakatime.com/@hasithz"><img src="https://wakatime.com/badge/user/0082e462-3798-4304-b939-fbb728314dbb.svg?style=social" alt="wakatime"></a> -->
+<a href="https://wakatime.com/@0082e462-3798-4304-b939-fbb728314dbb"><img src="https://wakatime.com/badge/user/0082e462-3798-4304-b939-fbb728314dbb.svg" alt="Total time coded since Sep 8 2022" /></a>
+<a href="https://github.com/hasithz?tab=followers"><img src="https://img.shields.io/github/followers/hasithz?&logoColor=red&style=social" alt="GitHub followers"></a>
+</p>
+
+
+<p align="center">
+<a href="https://gist.github.com/hasithz"><img src="https://profile-counter.glitch.me/{hasithz}/count.svg" alt="hasithz :: Visitor's Count" /></a>
+</p>
 
 
 
