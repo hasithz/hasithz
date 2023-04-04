@@ -37,6 +37,7 @@ Here are some ideas to get you started:
 <a href="https://github.com/hasithz?tab=followers"><img src="https://img.shields.io/github/followers/hasithz?&logoColor=red&style=social" alt="GitHub followers"></a>
 </p>
 
+[![Top Langs](https://github-readme-stats.vercel.app/api/top-langs/?username=hasithz&layout=compact)](https://github.com/hasithz/github-readme-stats)
 
 <p align="center">
 <a href="https://gist.github.com/hasithz"><img src="https://profile-counter.glitch.me/{hasithz}/count.svg" alt="hasithz :: Visitor's Count" /></a>
