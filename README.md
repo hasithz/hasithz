@@ -4,7 +4,7 @@ Here are some ideas to get you started:
 
 - 🔭 I’m currently working on my own project to help biginners
 - 🌱 I’m currently learning python and machine learning 
-- 👯 I’m looking to collaborate on industrial automation and IoT projects
+- 👯 I’m looking to collaborate on AI, industrial automation and IoT projects
 - 🤔 I’m looking for help with good with app development 
 - 💬 Ask me about my projects and how i did them
 - 📫 How to reach me: send me a mail and i'll reply you within 1 day
