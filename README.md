@@ -66,7 +66,7 @@ Here are some ideas to get you started:
 <a href="https://gist.github.com/hasithz"><img src="https://profile-counter.glitch.me/{hasithz}/count.svg" alt="hasithz :: Visitor's Count" /></a>
 </p>
 
-
+<br clear="both">
 <img src="https://raw.githubusercontent.com/hasithz/hasithz/output/snake.svg" alt="Snake animation" />
 
 ![Alt text](https://spotify-recently-played-readme.vercel.app/api?user=31gttnlnxmzw5z3smjbfcrzpv5pe&unique={true|1|on|yes})
