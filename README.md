@@ -67,7 +67,7 @@ Here are some ideas to get you started:
 </p>
 
 
-
+<img src="https://raw.githubusercontent.com/hasithz/hasithz/output/snake.svg" alt="Snake animation" />
 <!--
 **hasithz/hasithz** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
 - 123
