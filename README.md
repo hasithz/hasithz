@@ -68,6 +68,8 @@ Here are some ideas to get you started:
 
 
 <img src="https://raw.githubusercontent.com/hasithz/hasithz/output/snake.svg" alt="Snake animation" />
+
+![Alt text](https://spotify-recently-played-readme.vercel.app/api?user=31gttnlnxmzw5z3smjbfcrzpv5pe&unique={true|1|on|yes})
 <!--
 **hasithz/hasithz** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
 - 123
