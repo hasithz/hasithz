@@ -42,7 +42,9 @@ Here are some ideas to get you started:
 
 <p align="center">
     
-    
+<!-- https://github.com/hasithz/github-readme-activity-graph -->
+
+  <a href="https://github.com/hasithz/github-readme-activity-graph"><img alt="DenverCoder1's Activity Graph" src="https://github-readme-activity-graph.vercel.app/graph/?username=hasithz&bg_color=1F222E&color=F8D866&line=F85D7F&point=FFFFFF&hide_border=true" /></a>    
     
 <a href="https://gist.github.com/hasithz"><img src="https://profile-counter.glitch.me/{hasithz}/count.svg" alt="hasithz :: Visitor's Count" /></a>
 </p>
