@@ -68,6 +68,7 @@ Here are some ideas to get you started:
 
 <br clear="both">
 <!-- <img src="https://raw.githubusercontent.com/hasithz/hasithz/output/snake.svg" alt="Snake animation" /> -->
+<img src="https://raw.githubusercontent.com/hasithz/hasithz/output/github-snake.svg" alt="Snake animation" />
 <img alt="github-snake" src="github-snake.svg" />
 
 ![Alt text](https://spotify-recently-played-readme.vercel.app/api?user=31gttnlnxmzw5z3smjbfcrzpv5pe&unique={true|1|on|yes})
