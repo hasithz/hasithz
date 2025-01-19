@@ -35,13 +35,13 @@ Here are some ideas to get you started:
 ### 📊 GitHub Stats:
 ![GitHub Stats](https://github-readme-stats.vercel.app/api?username=hasithz&show_icons=true&title_color=ffffff&icon_color=bb2acf&text_color=daf7dc&bg_color=151515)
 
-![GitHub Streak](https://github-readme-streak-stats.herokuapp.com/?user=hasithz&theme=dark&hide_border=false)
+![GitHub Streak](https://streak-stats.demolab.com/?user=hasithz&theme=dark&hide_border=false)
 
 ---
 
 ### 📈 Activity Graph:
-<a href="https://github-activity-graph.cyclic.app/graph?username=hasithz">
-  <img src="https://github-activity-graph.cyclic.app/graph?username=hasithz&bg_color=1F222E&color=F8D866&line=F85D7F&point=FFFFFF&hide_border=true" alt="Activity Graph" />
+<a href="https://github.com/Ashutosh00710/github-readme-activity-graph">
+  <img src="https://github-readme-activity-graph.vercel.app/graph?username=hasithz&theme=react-dark&hide_border=false&area=true" alt="Activity Graph" />
 </a>
 
 ---
