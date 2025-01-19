@@ -47,7 +47,7 @@ Here are some ideas to get you started:
 ---
 
 ### 🐍 Snake Animation:
-![Snake animation](https://raw.githubusercontent.com/hasithz/hasithz/output/github-contribution-grid-snake.svg)
+![Snake animation](https://raw.githubusercontent.com/hasithz/hasithz/output/snake.svg)
 
 ---
 
