@@ -37,7 +37,7 @@ Here are some ideas to get you started:
 
 ![GitHub Streak](https://streak-stats.demolab.com/?user=hasithz&theme=dark&hide_border=false)
 
-![GitHub Streak](https://streak-stats.demolab.com/?user=hasithz&theme=dark&hide_border=false&timestamp=1675601234)
+![GitHub Streak](https://streak-stats.demolab.com/?user=hasithz&theme=dark&hide_border=false&cache_bust=1674131234)
 
 
 ---
