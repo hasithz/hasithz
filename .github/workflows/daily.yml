@@ -24,6 +24,7 @@ jobs:
         run: | 
           ls -la
           echo "Today's pattern" > pattern.txt
+          chmod +x dynamic_commit.sh
           bash dynamic_commit.sh
 
       - name: Push changes
