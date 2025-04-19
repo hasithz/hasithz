@@ -1,0 +1,30 @@
+name: Daily Graph Update
+
+on:
+  schedule:
+    - cron: '0 5 * * *'  # Runs daily at 5 AM UTC
+  workflow_dispatch:
+
+jobs:
+  update-graph:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Set up Git
+        run: |
+          git config --global user.name 'hasithz'
+          git config --global user.email 'hasith.dhz@gmail.com'
+
+      - name: Install figlet
+        run: sudo apt-get install -y figlet
+
+      - name: Commit today's pattern
+        run: bash dynamic_commit.sh
+
+      - name: Push changes
+        run: |
+          git push origin main
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
