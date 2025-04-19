@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -euo pipefail
+set -e
 
 # ────────────────────────────── CONFIG ──────────────────────────────
 WORDS_FILE="messages.txt"      # 1 word/emoji per line
