@@ -4,11 +4,13 @@ set -euo pipefail             # stop on any error
 ###############################################################################
 # 0. Get the *root* commit robustly (no reliance on the message text)
 ###############################################################################
-root_commit=$(git rev-list --max-parents=0 HEAD | tail -1)
-
-echo "🔄 Resetting branch to root commit: $root_commit"
-git checkout -q main          # make sure we’re on a branch, not detached
-git reset --hard "$root_commit"
+if [[ "${RESET_HISTORY:-0}" == "1" ]]; then
+  root_commit=$(git rev-list --max-parents=0 HEAD | tail -1)
+  echo "🔄 Forcing full reset to root commit: $root_commit"
+  git reset --hard "$root_commit"
+else
+  echo "⏩  No history reset (keeping previous drawings)"
+fi
 
 ###############################################################################
 # 1. Ensure figlet is available (skip install inside Actions for speed)
