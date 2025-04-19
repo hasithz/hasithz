@@ -1,78 +1,60 @@
-#!/bin/bash
+#!/usr/bin/env bash
+set -euo pipefail
 
-set -e
+# ────────────────────────────── CONFIG ──────────────────────────────
+WORDS_FILE="messages.txt"      # 1 word/emoji per line
+COMMITS_PER_CELL=12            # 1‑30 → light→dark
+FONT="standard"                # any figlet font installed locally
+START_TIME="12:00:00"          # commit time of day (HH:MM:SS)
+PATTERN_FILE=".pattern.tmp"    # temp bitmap (auto‑deleted)
+# ────────────────────────────────────────────────────────────────────
 
-### 1. Full reset of git history
-echo "🧨 Wiping all Git history..."
-
-### 2. Preserve your existing README.md but do not modify it
-initial_date=$(date -d "last sunday -51 weeks" +%Y-%m-%d)
-
-GIT_AUTHOR_DATE="$initial_date 00:00:00" \
-GIT_COMMITTER_DATE="$initial_date 00:00:00" \
-git commit -m "initial commit"
-
-echo "✅ Backdated initial commit created at $initial_date"
-
-### 3. Ensure figlet is installed
-if ! command -v figlet &> /dev/null; then
-    echo "🛠 Installing figlet..."
-    sudo apt-get update && sudo apt-get install -y figlet
+### 0. Prepare a *fresh* repo so old commits don’t re‑appear
+if [ -d .git ]; then
+  read -p "Repo already exists. Completely reset history? (y/N) " YES
+  [[ $YES == y* ]] || { echo "Aborted."; exit 1; }
+  rm -rf .git
 fi
+git init -q
 
-### 4. Ensure messages.txt exists
-if [ ! -f messages.txt ]; then
-    echo -e "HASITH\nHELLO\n❤️\nDREAM\nBUILD\nENJOY" > messages.txt
-    echo "✅ Created default messages.txt"
-fi
+### 1. Pick a word (rotates daily)
+mapfile -t WORDS < "$WORDS_FILE"
+idx=$(( $(date +%j) % ${#WORDS[@]} ))
+WORD="${WORDS[$idx]}"
+echo "→ Rendering '$WORD' for today’s pattern"
 
-### 5. Randomly select a word from messages.txt
-mapfile -t messages < messages.txt
-msg_count=${#messages[@]}
+### 2. Convert to a 52×7 bitmap
+figlet -w 52 -f "$FONT" "$WORD" \
+ | sed 's/[^ ]/#/g' \
+ | awk '{printf "%-52s\n", substr($0,1,52)}' \
+ | head -n 7 > "$PATTERN_FILE"
 
-if [ "$msg_count" -eq 0 ]; then
-    echo "❌ 'messages.txt' is empty."
-    exit 1
-fi
+echo "→ Preview:"
+sed 's/#/█/g' "$PATTERN_FILE"
 
-word="${messages[$((RANDOM % msg_count))]}"
-echo "🎯 Randomly selected word: $word"
+### 3. Calculate bottom‑left date (last Sunday, 51 weeks ago)
+START_DATE=$(date -d "last sunday -51 weeks" +%Y-%m-%d)
+echo "→ First cell = $START_DATE"
 
-### 6. Generate ASCII pattern (52 wide, up to 7 high)
-figlet -w 52 -f banner "$word" > pic.txt
-mapfile -t lines < pic.txt
-
-# Pad to 7 rows if needed
-while [ "${#lines[@]}" -lt 7 ]; do
-    lines+=("")
-done
-
-### 7. Preview pattern in terminal
-echo -e "\n📊 Contribution Graph Pattern Preview:"
-for line in "${lines[@]}"; do
-    echo "$line" | sed 's/[^[:space:]]/█/g'
-done
-echo
-
-### 8. Start commit grid drawing
-start_date=$(date -d "last sunday -51 weeks" +%Y-%m-%d)
-
-for row in {0..6}; do
-  for col in {0..51}; do
-    char="${lines[$row]:$col:1}"
-    if [[ "$char" != " " && "$char" != "" ]]; then
-      commit_date=$(date -d "$start_date +$col weeks +$row days" +%Y-%m-%d)
-      for i in $(seq 1 6); do
-        echo "$commit_date - $word commit $i" > fake.txt
-        git add fake.txt
-        GIT_AUTHOR_DATE="$commit_date 12:00:00" \
-        GIT_COMMITTER_DATE="$commit_date 12:00:00" \
-        git commit -m "[$word] Commit $i on $commit_date"
-      done
-    fi
+### 4. Paint the grid with fake commits
+ROW=0
+while IFS= read -r LINE; do
+  for COL in {0..51}; do
+    [[ "${LINE:$COL:1}" == "#" ]] || continue
+    CELL_DATE=$(date -d "$START_DATE +$COL weeks +$ROW days" +%Y-%m-%d)
+    for i in $(seq 1 $COMMITS_PER_CELL); do
+      echo "$CELL_DATE • $WORD • $i" > .dummy.txt
+      git add .dummy.txt
+      GIT_AUTHOR_DATE="$CELL_DATE $START_TIME" \
+      GIT_COMMITTER_DATE="$CELL_DATE $START_TIME" \
+      git commit -q -m "$WORD pixel ($ROW,$COL) $i"
+    done
   done
-done
+  ROW=$((ROW + 1))
+done < "$PATTERN_FILE"
 
-rm -f fake.txt
-echo "✅ All commits added. Push using:"
-echo "   git push origin main --force"
+rm -f "$PATTERN_FILE" .dummy.txt
+echo "✔  Done!\nPush with:"
+echo "   git branch -M main"
+echo "   git remote add origin <YOUR_REPO_URL>"
+echo "   git push -u origin main"
