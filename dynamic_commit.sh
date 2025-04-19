@@ -1,26 +1,28 @@
 #!/bin/bash
 
-# Exit immediately if any command fails
+# Exit immediately on error
 set -e
 
+# 🔐 Check for git repository
 if [ ! -d ".git" ]; then
-    echo "❌ Not a Git repository. Run this in a git-initialized folder."
+    echo "❌ Not a Git repository. Run this script in a git-initialized folder."
     exit 1
 fi
 
-# Ensure figlet is installed
+# 🧰 Install figlet if not installed
 if ! command -v figlet &> /dev/null; then
     echo "🛠 Installing figlet..."
     sudo apt-get update && sudo apt-get install -y figlet
 fi
 
-# Check if messages.txt exists
+# 📄 Check for messages.txt
 if [ ! -f messages.txt ]; then
-    echo "❌ 'messages.txt' not found. Please create one with a list of words (one per line)."
-    exit 1
+    echo "❌ 'messages.txt' not found. Please create one with words like:"
+    echo -e "HASITH\nHELLO\n❤️\nBUILD\nENJOY" > messages.txt
+    echo "✅ Example messages.txt created."
 fi
 
-# Load rotating message
+# 🔁 Load message of the day
 mapfile -t messages < messages.txt
 msg_count=${#messages[@]}
 if [ "$msg_count" -eq 0 ]; then
@@ -32,19 +34,25 @@ day_of_year=$(date +%j)
 msg_index=$((day_of_year % msg_count))
 message=${messages[$msg_index]}
 
-# Generate ASCII art (52 columns wide)
+# 🎨 Create ASCII art
 figlet -w 52 -f banner "$message" > pic.txt
 mapfile -t lines < pic.txt
 
-# Calculate position in contribution graph
+# 🔍 Preview ASCII in terminal
+echo -e "\n📊 Contribution Graph Pattern Preview:"
+for line in "${lines[@]}"; do
+    echo "$line" | sed 's/[^[:space:]]/█/g'
+done
+echo
+
+# 📅 Contribution position
 col=$(date +%U)  # current week number
-row_count=7      # GitHub graph has 7 rows (Sun–Sat)
+row_count=7      # GitHub graph rows: Sunday to Saturday
 start_date=$(date -d "last sunday -51 weeks" +%Y-%m-%d)
 
-echo "📅 Today: $(date)"
-echo "🖼️ Rendering message: '$message' at week $col"
+echo "🖼️ Rendering '$message' into GitHub contribution graph (week $col)"
 
-# Loop through 7 rows for this week and commit if pixel is present
+# 🟩 Loop through today's column and commit each non-space character
 commit_made=false
 for row in $(seq 0 $((row_count - 1))); do
     char="${lines[$row]:$col:1}"
@@ -64,7 +72,7 @@ done
 rm -f fake.txt
 
 if $commit_made; then
-    echo "✅ Commits added for '$message' at week $col."
+    echo "✅ Commits added for '$message'. Push to GitHub to update the graph!"
 else
     echo "⚠️ No visible characters in today's column. Nothing committed."
 fi
