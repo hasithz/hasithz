@@ -1,60 +1,74 @@
 #!/usr/bin/env bash
-set -e
+set -euo pipefail             # stop on any error
 
-# ────────────────────────────── CONFIG ──────────────────────────────
-WORDS_FILE="messages.txt"      # 1 word/emoji per line
-COMMITS_PER_CELL=12            # 1‑30 → light→dark
-FONT="standard"                # any figlet font installed locally
-START_TIME="12:00:00"          # commit time of day (HH:MM:SS)
-PATTERN_FILE=".pattern.tmp"    # temp bitmap (auto‑deleted)
-# ────────────────────────────────────────────────────────────────────
+###############################################################################
+# 0. Get the *root* commit robustly (no reliance on the message text)
+###############################################################################
+root_commit=$(git rev-list --max-parents=0 HEAD | tail -1)
 
-### 0. Prepare a *fresh* repo so old commits don’t re‑appear
-if [ -d .git ]; then
-  read -p "Repo already exists. Completely reset history? (y/N) " YES
-  [[ $YES == y* ]] || { echo "Aborted."; exit 1; }
-  rm -rf .git
+echo "🔄 Resetting branch to root commit: $root_commit"
+git checkout -q main          # make sure we’re on a branch, not detached
+git reset --hard "$root_commit"
+
+###############################################################################
+# 1. Ensure figlet is available (skip install inside Actions for speed)
+###############################################################################
+if ! command -v figlet &>/dev/null; then
+  echo "🛠  Installing figlet locally…"
+  sudo apt-get update -qq && sudo apt-get install -y figlet
 fi
-git init -q
 
-### 1. Pick a word (rotates daily)
-mapfile -t WORDS < "$WORDS_FILE"
-idx=$(( $(date +%j) % ${#WORDS[@]} ))
-WORD="${WORDS[$idx]}"
-echo "→ Rendering '$WORD' for today’s pattern"
+###############################################################################
+# 2. Load message list (create default if the file is missing)
+###############################################################################
+WORDS_FILE="messages.txt"
+if [[ ! -f $WORDS_FILE ]]; then
+  printf "HASITH\nHELLO\n❤️\nDREAM\nBUILD\nENJOY\n" > "$WORDS_FILE"
+  echo "✅  Created default $WORDS_FILE"
+fi
 
-### 2. Convert to a 52×7 bitmap
-figlet -w 52 -f "$FONT" "$WORD" \
- | sed 's/[^ ]/#/g' \
- | awk '{printf "%-52s\n", substr($0,1,52)}' \
- | head -n 7 > "$PATTERN_FILE"
+mapfile -t words < "$WORDS_FILE"
+[[ ${#words[@]} -gt 0 ]] || { echo "❌ $WORDS_FILE is empty"; exit 1; }
 
-echo "→ Preview:"
-sed 's/#/█/g' "$PATTERN_FILE"
+# Rotate through the list by day‑of‑year
+word="${words[$(( $(date +%j) % ${#words[@]} ))]}"
+echo "🎯 Word of the day: $word"
 
-### 3. Calculate bottom‑left date (last Sunday, 51 weeks ago)
-START_DATE=$(date -d "last sunday -51 weeks" +%Y-%m-%d)
-echo "→ First cell = $START_DATE"
+###############################################################################
+# 3. Convert the word to a 52×7 bitmap
+###############################################################################
+PIC=".pic.tmp"
+figlet -w 52 -f banner "$word" > "$PIC"
 
-### 4. Paint the grid with fake commits
-ROW=0
-while IFS= read -r LINE; do
-  for COL in {0..51}; do
-    [[ "${LINE:$COL:1}" == "#" ]] || continue
-    CELL_DATE=$(date -d "$START_DATE +$COL weeks +$ROW days" +%Y-%m-%d)
-    for i in $(seq 1 $COMMITS_PER_CELL); do
-      echo "$CELL_DATE • $WORD • $i" > .dummy.txt
-      git add .dummy.txt
-      GIT_AUTHOR_DATE="$CELL_DATE $START_TIME" \
-      GIT_COMMITTER_DATE="$CELL_DATE $START_TIME" \
-      git commit -q -m "$WORD pixel ($ROW,$COL) $i"
+mapfile -t lines < "$PIC"
+while ((${#lines[@]} < 7)); do lines+=(""); done          # pad to 7 rows
+
+echo -e "\n📊 Preview:"
+for l in "${lines[@]}"; do
+  printf '%-52s\n' "${l:0:52}" | sed 's/[^[:space:]]/█/g'
+done
+echo
+
+###############################################################################
+# 4. Commit loop (one pixel = 6 commits → medium‑dark square)
+###############################################################################
+base=$(date -d "last sunday -51 weeks" +%Y-%m-%d)
+
+for row in {0..6}; do
+  for col in {0..51}; do
+    char="${lines[$row]:$col:1}"
+    [[ -n $char && $char != ' ' ]] || continue
+
+    day=$(date -d "$base +$col weeks +$row days" +%Y-%m-%d)
+    for i in {1..6}; do
+      echo "$day – pixel ($row,$col) $i" > fake.txt
+      git add fake.txt
+      GIT_AUTHOR_DATE="$day 12:00:00" \
+      GIT_COMMITTER_DATE="$day 12:00:00" \
+      git commit -q -m "[$word] pixel ($row,$col) commit $i"
     done
   done
-  ROW=$((ROW + 1))
-done < "$PATTERN_FILE"
+done
 
-rm -f "$PATTERN_FILE" .dummy.txt
-echo "✔  Done!\nPush with:"
-echo "   git branch -M main"
-echo "   git remote add origin <YOUR_REPO_URL>"
-echo "   git push -u origin main"
+rm -f fake.txt "$PIC"
+echo "✅ All commits staged. Push with --force to overwrite history."
