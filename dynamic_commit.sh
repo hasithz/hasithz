@@ -1,78 +1,61 @@
 #!/bin/bash
 
-# Exit immediately on error
+# Abort on error
 set -e
 
-# 🔐 Check for git repository
+# Git repo check
 if [ ! -d ".git" ]; then
-    echo "❌ Not a Git repository. Run this script in a git-initialized folder."
+    echo "❌ Not a Git repository. Run in a Git-initialized folder."
     exit 1
 fi
 
-# 🧰 Install figlet if not installed
+# Ensure figlet is installed
 if ! command -v figlet &> /dev/null; then
     echo "🛠 Installing figlet..."
     sudo apt-get update && sudo apt-get install -y figlet
 fi
 
-# 📄 Check for messages.txt
-if [ ! -f messages.txt ]; then
-    echo "❌ 'messages.txt' not found. Please create one with words like:"
-    echo -e "HASITH\nHELLO\n❤️\nBUILD\nENJOY" > messages.txt
-    echo "✅ Example messages.txt created."
-fi
+# Message to render
+MESSAGE=${1:-HASITH}
 
-# 🔁 Load message of the day
-mapfile -t messages < messages.txt
-msg_count=${#messages[@]}
-if [ "$msg_count" -eq 0 ]; then
-    echo "❌ 'messages.txt' is empty."
-    exit 1
-fi
-
-day_of_year=$(date +%j)
-msg_index=$((day_of_year % msg_count))
-message=${messages[$msg_index]}
-
-# 🎨 Create ASCII art
-figlet -w 52 -f banner "$message" > pic.txt
+# Generate 52x7 ASCII art
+figlet -w 52 -f banner "$MESSAGE" > pic.txt
 mapfile -t lines < pic.txt
 
-# 🔍 Preview ASCII in terminal
-echo -e "\n📊 Contribution Graph Pattern Preview:"
+# Ensure height is 7 (GitHub graph height)
+if [ "${#lines[@]}" -lt 7 ]; then
+    echo "⚠️ ASCII art too short. Padding to 7 rows."
+    while [ "${#lines[@]}" -lt 7 ]; do
+        lines+=(" ")
+    done
+fi
+
+# Preview
+echo -e "\n📊 Commit Graph Preview:"
 for line in "${lines[@]}"; do
     echo "$line" | sed 's/[^[:space:]]/█/g'
 done
 echo
 
-# 📅 Contribution position
-col=$(date +%U)  # current week number
-row_count=7      # GitHub graph rows: Sunday to Saturday
+# Start date: last Sunday - 51 weeks
 start_date=$(date -d "last sunday -51 weeks" +%Y-%m-%d)
 
-echo "🖼️ Rendering '$message' into GitHub contribution graph (week $col)"
-
-# 🟩 Loop through today's column and commit each non-space character
-commit_made=false
-for row in $(seq 0 $((row_count - 1))); do
-    char="${lines[$row]:$col:1}"
-    if [ "$char" != " " ] && [ -n "$char" ]; then
-        commit_date=$(date -d "$start_date +$col weeks +$row days" +%Y-%m-%d)
-        for i in $(seq 1 6); do
-            echo "$commit_date - Commit $i for $message" > fake.txt
-            git add fake.txt
-            GIT_AUTHOR_DATE="$commit_date 12:00:00" \
-            GIT_COMMITTER_DATE="$commit_date 12:00:00" \
-            git commit -m "[$message] Pixel commit at ($col,$row)"
-        done
-        commit_made=true
-    fi
+# Loop over the 52x7 grid
+for row in {0..6}; do
+    for col in {0..51}; do
+        char="${lines[$row]:$col:1}"
+        if [[ "$char" != " " && "$char" != "" ]]; then
+            commit_date=$(date -d "$start_date +$col weeks +$row days" +%Y-%m-%d)
+            for i in $(seq 1 5); do  # 5 commits per day = dark square
+                echo "$commit_date - $MESSAGE fake commit $i" > fake.txt
+                git add fake.txt
+                GIT_AUTHOR_DATE="$commit_date 12:00:00" \
+                GIT_COMMITTER_DATE="$commit_date 12:00:00" \
+                git commit -m "[$MESSAGE] Fake commit $i on $commit_date"
+            done
+        fi
+    done
 done
 
 rm -f fake.txt
-
-if $commit_made; then
-    echo "✅ Commits added for '$message'. Push to GitHub to update the graph!"
-else
-    echo "⚠️ No visible characters in today's column. Nothing committed."
-fi
+echo "✅ All commits created. Push with: git push origin main --force"
